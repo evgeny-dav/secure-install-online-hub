@@ -23,6 +23,7 @@ import Maintenance from "./pages/Maintenance";
 import SystemDesign from "./pages/SystemDesign";
 import SystemModernization from "./pages/SystemModernization";
 import Consulting from "./pages/Consulting";
+import MaintenanceOrder from "./pages/MaintenanceOrder";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => (
               <Route path="/services/design" element={<SystemDesign />} />
               <Route path="/services/upgrade" element={<SystemModernization />} />
               <Route path="/services/consulting" element={<Consulting />} />
+              <Route path="/services/maintenance/order" element={<MaintenanceOrder />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

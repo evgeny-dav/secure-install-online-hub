@@ -46,7 +46,7 @@ const Maintenance = () => {
                 <p className="text-gray-700">Оперативное устранение неисправностей</p>
               </div>
             </div>
-            <Link to="/order">
+            <Link to="/services/maintenance/order">
               <Button className="btn-primary">
                 Заказать обслуживание
               </Button>
@@ -155,7 +155,7 @@ const Maintenance = () => {
                 <span>До 5 устройств</span>
               </li>
             </ul>
-            <Link to="/order" className="block">
+            <Link to="/services/maintenance/order" className="block">
               <Button variant="outline" className="w-full">Выбрать план</Button>
             </Link>
           </div>
@@ -191,7 +191,7 @@ const Maintenance = () => {
                 <span>Приоритетное обслуживание</span>
               </li>
             </ul>
-            <Link to="/order" className="block">
+            <Link to="/services/maintenance/order" className="block">
               <Button className="w-full">Выбрать план</Button>
             </Link>
           </div>
@@ -231,7 +231,7 @@ const Maintenance = () => {
                 <span>Бесплатная замена оборудования</span>
               </li>
             </ul>
-            <Link to="/order" className="block">
+            <Link to="/services/maintenance/order" className="block">
               <Button variant="outline" className="w-full">Выбрать план</Button>
             </Link>
           </div>
@@ -251,9 +251,9 @@ const Maintenance = () => {
               Связаться с нами
             </Button>
           </Link>
-          <Link to="/services">
+          <Link to="/services/maintenance/order">
             <Button size="lg" variant="outline" className="border-guard-primary text-guard-primary hover:bg-guard-primary hover:text-white">
-              Вернуться к услугам
+              Заказать обслуживание
             </Button>
           </Link>
         </div>

@@ -16,43 +16,9 @@ import ProductCard from '@/components/ProductCard';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/components/ui/use-toast';
 import { Product } from '@/types';
+import { getProductById } from '@/data/mockData';
 
-// Mock data for the product
-const product: Product = {
-  id: "1",
-  name: "IP-камера Hikvision DS-2CD2143G2-I",
-  category: "cameras",
-  type: "video",
-  price: 12500,
-  discountPrice: 9999,
-  image: "https://via.placeholder.com/600x400?text=Camera",
-  rating: 4.8,
-  reviews: 124,
-  inStock: true,
-  description: "Высококачественная IP-камера с разрешением 4 МП для систем видеонаблюдения. Оснащена ИК-подсветкой до 30 м, имеет защиту от пыли и влаги по стандарту IP67.",
-  features: [
-    "Разрешение 4 МП (2688 × 1520)",
-    "ИК-подсветка до 30 м",
-    "Класс защиты IP67",
-    "Поддержка H.265+",
-    "Обнаружение движения",
-    "Встроенный микрофон"
-  ],
-  specifications: {
-    "Сенсор": "1/3'' CMOS",
-    "Разрешение": "4 МП (2688 × 1520)",
-    "Объектив": "2.8 мм",
-    "Угол обзора": "103°",
-    "Ночное видение": "30 метров",
-    "Сжатие": "H.265+/H.265/H.264+/H.264",
-    "Сеть": "RJ-45 (10/100 Base-T)",
-    "Питание": "12 В DC / PoE (802.3af)",
-    "Рабочая температура": "-30°C до +60°C",
-    "Размеры": "70 × 155 × 70 мм"
-  }
-};
-
-// Mock data for related products
+// Mock related products
 const relatedProducts: Product[] = [
   {
     id: "2",
@@ -110,12 +76,47 @@ const relatedProducts: Product[] = [
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
+  
+  // Fetch product data
+  const product = getProductById(id || '') || {
+    id: "1",
+    name: "IP-камера Hikvision DS-2CD2143G2-I",
+    category: "cameras",
+    type: "video",
+    price: 12500,
+    discountPrice: 9999,
+    image: "https://via.placeholder.com/600x400?text=Camera",
+    rating: 4.8,
+    reviews: 124,
+    inStock: true,
+    description: "Высококачественная IP-камера с разрешением 4 МП для систем видеонаблюдения. Оснащена ИК-подсветкой до 30 м, имеет защиту от пыли и влаги по стандарту IP67.",
+    features: [
+      "Разрешение 4 МП (2688 × 1520)",
+      "ИК-подсветка до 30 м",
+      "Класс защиты IP67",
+      "Поддержка H.265+",
+      "Обнаружение движения",
+      "Встроенный микрофон"
+    ],
+    specifications: {
+      "Сенсор": "1/3'' CMOS",
+      "Разрешение": "4 МП (2688 × 1520)",
+      "Объектив": "2.8 мм",
+      "Угол обзора": "103°",
+      "Ночное видение": "30 метров",
+      "Сжатие": "H.265+/H.265/H.264+/H.264",
+      "Сеть": "RJ-45 (10/100 Base-T)",
+      "Питание": "12 В DC / PoE (802.3af)",
+      "Рабочая температура": "-30°C до +60°C",
+      "Размеры": "70 × 155 × 70 мм"
+    }
+  };
 
   const handleAddToCart = () => {
-    addToCart(product.id, quantity);
+    addItem(product.id);
     toast({
       title: "Товар добавлен в корзину",
       description: `${product.name} (${quantity} шт.)`,
