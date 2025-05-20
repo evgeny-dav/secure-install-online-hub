@@ -80,7 +80,7 @@ const About = () => {
         </div>
       </div>
       
-      {/* История компании */}
+      {/* История компании */}{/*
       <div className="bg-white rounded-lg shadow-md p-8 mb-12">
         <h2 className="text-2xl font-bold mb-6">История компании</h2>
         <div className="relative border-l-2 border-guard-primary pl-8 ml-4">
@@ -130,7 +130,7 @@ const About = () => {
           </div>
         </div>
       </div>
-      
+      */}
       {/* Команда */}
       <div className="mb-12">
         <h2 className="text-2xl font-bold text-center mb-8">Наша команда</h2>
@@ -144,7 +144,7 @@ const About = () => {
               />
             </div>
             <div className="p-4">
-              <h3 className="text-lg font-semibold mb-1">Алексей Иванов</h3>
+              <h3 className="text-lg font-semibold mb-1">Евгений Давыдов</h3>
               <p className="text-guard-primary mb-2">Генеральный директор</p>
               <p className="text-sm text-gray-600">
                 Опыт работы в сфере безопасности более 15 лет. Отвечает за стратегическое развитие компании.
@@ -161,7 +161,7 @@ const About = () => {
               />
             </div>
             <div className="p-4">
-              <h3 className="text-lg font-semibold mb-1">Сергей Петров</h3>
+              <h3 className="text-lg font-semibold mb-1">Сергей Каргополов</h3>
               <p className="text-guard-primary mb-2">Технический директор</p>
               <p className="text-sm text-gray-600">
                 Сертифицированный инженер с опытом проектирования сложных систем безопасности.
