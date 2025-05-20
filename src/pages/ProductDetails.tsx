@@ -1,207 +1,311 @@
 
-import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { 
+  ShoppingCart, 
+  Heart, 
+  Share2, 
+  Star, 
+  CheckCircle,
+  ArrowRight,
+  ShoppingBag,
+  Package
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getProductById } from '@/data/mockData';
-import { Product } from '@/types';
+import ProductCard from '@/components/ProductCard';
 import { useCart } from '@/contexts/CartContext';
-import { ChevronLeft, ShoppingCart, Check, Info, Shield } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from '@/components/ui/use-toast';
+import { Product } from '@/types';
+
+// Mock data for the product
+const product: Product = {
+  id: "1",
+  name: "IP-камера Hikvision DS-2CD2143G2-I",
+  category: "cameras",
+  type: "video",
+  price: 12500,
+  discountPrice: 9999,
+  image: "https://via.placeholder.com/600x400?text=Camera",
+  rating: 4.8,
+  reviews: 124,
+  inStock: true,
+  description: "Высококачественная IP-камера с разрешением 4 МП для систем видеонаблюдения. Оснащена ИК-подсветкой до 30 м, имеет защиту от пыли и влаги по стандарту IP67.",
+  features: [
+    "Разрешение 4 МП (2688 × 1520)",
+    "ИК-подсветка до 30 м",
+    "Класс защиты IP67",
+    "Поддержка H.265+",
+    "Обнаружение движения",
+    "Встроенный микрофон"
+  ],
+  specifications: {
+    "Сенсор": "1/3'' CMOS",
+    "Разрешение": "4 МП (2688 × 1520)",
+    "Объектив": "2.8 мм",
+    "Угол обзора": "103°",
+    "Ночное видение": "30 метров",
+    "Сжатие": "H.265+/H.265/H.264+/H.264",
+    "Сеть": "RJ-45 (10/100 Base-T)",
+    "Питание": "12 В DC / PoE (802.3af)",
+    "Рабочая температура": "-30°C до +60°C",
+    "Размеры": "70 × 155 × 70 мм"
+  }
+};
+
+// Mock data for related products
+const relatedProducts: Product[] = [
+  {
+    id: "2",
+    name: "IP-камера Hikvision DS-2CD2043G2-I",
+    category: "cameras",
+    type: "video",
+    price: 10500,
+    image: "https://via.placeholder.com/300x200?text=Camera+2",
+    rating: 4.6,
+    reviews: 95,
+    inStock: true,
+    description: "IP-камера с разрешением 4 МП",
+    features: ["Разрешение 4 МП", "ИК-подсветка до 30 м"],
+    specifications: {
+      "Сенсор": "1/3'' CMOS",
+      "Разрешение": "4 МП"
+    }
+  },
+  {
+    id: "3",
+    name: "IP-камера Hikvision DS-2CD2H43G2-IZS",
+    category: "cameras",
+    type: "video",
+    price: 15800,
+    image: "https://via.placeholder.com/300x200?text=Camera+3",
+    rating: 4.9,
+    reviews: 78,
+    inStock: true,
+    description: "IP-камера с разрешением 4 МП и моторизованным объективом",
+    features: ["Разрешение 4 МП", "Моторизованный объектив"],
+    specifications: {
+      "Сенсор": "1/3'' CMOS",
+      "Разрешение": "4 МП"
+    }
+  },
+  {
+    id: "4",
+    name: "IP-камера Hikvision DS-2CD2T47G2-L",
+    category: "cameras",
+    type: "video",
+    price: 13200,
+    image: "https://via.placeholder.com/300x200?text=Camera+4",
+    rating: 4.7,
+    reviews: 103,
+    inStock: false,
+    description: "IP-камера с технологией ColorVu для цветного ночного видения",
+    features: ["ColorVu", "Цветное ночное видение"],
+    specifications: {
+      "Сенсор": "1/2.7'' CMOS",
+      "Разрешение": "4 МП"
+    }
+  }
+];
 
 const ProductDetails = () => {
-  const { id } = useParams<{ id: string }>();
-  const [product, setProduct] = useState<Product | null>(null);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
+  const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
-  const { addItem } = useCart();
-
-  useEffect(() => {
-    if (id) {
-      const fetchedProduct = getProductById(id);
-      if (fetchedProduct) {
-        setProduct(fetchedProduct);
-      }
-    }
-  }, [id]);
 
   const handleAddToCart = () => {
-    if (product) {
-      addItem(product.id, quantity);
-    }
+    addToCart(product.id, quantity);
+    toast({
+      title: "Товар добавлен в корзину",
+      description: `${product.name} (${quantity} шт.)`,
+    });
   };
 
-  const incrementQuantity = () => {
+  const handleIncrement = () => {
     setQuantity(prev => prev + 1);
   };
 
-  const decrementQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(prev => prev - 1);
-    }
+  const handleDecrement = () => {
+    setQuantity(prev => (prev > 1 ? prev - 1 : 1));
   };
-
-  if (!product) {
-    return (
-      <div className="container py-12 text-center">
-        <h2 className="text-2xl font-bold mb-4">Товар не найден</h2>
-        <p className="text-gray-600 mb-6">Извините, запрашиваемый товар не существует или был удален.</p>
-        <Link to="/shop">
-          <Button className="btn-primary">Вернуться в магазин</Button>
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <div className="container py-8">
-      <Link to="/shop" className="inline-flex items-center text-guard-primary hover:text-guard-secondary mb-6">
-        <ChevronLeft className="h-4 w-4 mr-1" />
-        Назад к списку товаров
-      </Link>
+      <div className="mb-8 flex items-center text-sm">
+        <button onClick={() => navigate('/shop')} className="text-gray-500 hover:text-guard-primary">Магазин</button>
+        <span className="mx-2">/</span>
+        <button onClick={() => navigate('/shop?category=cameras')} className="text-gray-500 hover:text-guard-primary">Камеры</button>
+        <span className="mx-2">/</span>
+        <span className="text-guard-primary font-medium">{product.name}</span>
+      </div>
 
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
-          {/* Изображение товара */}
-          <div className="flex justify-center items-center">
-            <img 
-              src={product.image}
-              alt={product.name}
-              className="max-w-full max-h-80 object-contain"
-            />
-          </div>
-
-          {/* Информация о товаре */}
-          <div>
-            <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
-            <div className="text-sm text-gray-500 mb-4">
-              Категория: {product.category} | Артикул: {product.id}
-            </div>
-            
-            <div className="flex items-center mb-4">
-              <div className="flex text-amber-400">
-                {[...Array(5)].map((_, i) => (
-                  <svg 
-                    key={i} 
-                    className={`h-5 w-5 ${i < Math.floor(product.rating) ? 'fill-current' : 'stroke-current fill-none'}`}
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                  </svg>
-                ))}
-              </div>
-              <span className="text-gray-600 ml-2">{product.rating} ({product.reviews} отзывов)</span>
-            </div>
-
-            <div className="text-xl font-bold text-guard-primary mb-4">
-              {product.discountPrice ? (
-                <div className="flex items-center">
-                  <span className="text-2xl">
-                    {product.discountPrice.toLocaleString('ru-RU')} ₽
-                  </span>
-                  <span className="text-sm text-gray-500 line-through ml-2">
-                    {product.price.toLocaleString('ru-RU')} ₽
-                  </span>
-                </div>
-              ) : (
-                <span className="text-2xl">
-                  {product.price.toLocaleString('ru-RU')} ₽
-                </span>
-              )}
-            </div>
-
-            <div className="mb-6">
-              <div className="flex items-center text-sm mb-4">
-                <div className={`mr-2 ${product.inStock ? 'text-green-500' : 'text-red-500'}`}>
-                  {product.inStock ? (
-                    <Check className="h-5 w-5" />
-                  ) : (
-                    <Info className="h-5 w-5" />
-                  )}
-                </div>
-                <span className={product.inStock ? 'text-green-600' : 'text-red-500'}>
-                  {product.inStock ? 'В наличии' : 'Нет в наличии'}
-                </span>
-              </div>
-
-              <div className="flex items-center mb-6">
-                <Button 
-                  onClick={decrementQuantity} 
-                  variant="outline" 
-                  size="icon" 
-                  disabled={quantity <= 1 || !product.inStock}
-                  className="h-10 w-10"
-                >
-                  -
-                </Button>
-                <span className="w-16 text-center mx-2">{quantity}</span>
-                <Button 
-                  onClick={incrementQuantity} 
-                  variant="outline" 
-                  size="icon" 
-                  disabled={!product.inStock}
-                  className="h-10 w-10"
-                >
-                  +
-                </Button>
-                <Button 
-                  onClick={handleAddToCart} 
-                  className="ml-4 btn-primary flex-grow"
-                  disabled={!product.inStock}
-                >
-                  <ShoppingCart className="mr-2 h-5 w-5" />
-                  В корзину
-                </Button>
-              </div>
-
-              <div className="bg-guard-light rounded-lg p-4 text-sm">
-                <div className="flex items-start mb-2">
-                  <Shield className="h-5 w-5 text-guard-primary mt-0.5 mr-2" />
-                  <div>
-                    <p className="font-medium">Гарантия 12 месяцев</p>
-                    <p className="text-gray-600">На все оборудование и комплектующие</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <Truck className="h-5 w-5 text-guard-primary mt-0.5 mr-2" />
-                  <div>
-                    <p className="font-medium">Доставка и установка</p>
-                    <p className="text-gray-600">Доставка по всей России, профессиональный монтаж</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        {/* Product Image */}
+        <div className="bg-white rounded-lg overflow-hidden shadow-md">
+          <img 
+            src={product.image} 
+            alt={product.name} 
+            className="w-full h-auto object-contain"
+            style={{ minHeight: "400px" }}
+          />
         </div>
 
-        <Tabs defaultValue="description" className="p-6 border-t">
-          <TabsList className="grid grid-cols-3 mb-6">
-            <TabsTrigger value="description">Описание</TabsTrigger>
-            <TabsTrigger value="features">Особенности</TabsTrigger>
-            <TabsTrigger value="specifications">Характеристики</TabsTrigger>
-          </TabsList>
-          <TabsContent value="description" className="text-gray-700">
-            <p>{product.description}</p>
-          </TabsContent>
-          <TabsContent value="features">
+        {/* Product Info */}
+        <div>
+          <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
+          
+          <div className="flex items-center mb-4">
+            <div className="flex items-center">
+              <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
+              <span className="text-gray-700 ml-1 mr-2">{product.rating}</span>
+            </div>
+            <span className="text-gray-500">({product.reviews} отзывов)</span>
+            <span className="mx-3 text-gray-300">|</span>
+            <span className={`${product.inStock ? 'text-green-600' : 'text-red-500'}`}>
+              {product.inStock ? 'В наличии' : 'Нет в наличии'}
+            </span>
+          </div>
+          
+          <div className="mb-6">
+            {product.discountPrice ? (
+              <div className="flex items-center">
+                <span className="text-3xl font-bold text-guard-primary mr-3">{product.discountPrice} ₽</span>
+                <span className="text-gray-500 text-xl line-through">{product.price} ₽</span>
+                <span className="ml-3 bg-red-100 text-red-600 px-2 py-1 rounded text-sm font-medium">
+                  Скидка {Math.round((1 - product.discountPrice / product.price) * 100)}%
+                </span>
+              </div>
+            ) : (
+              <span className="text-3xl font-bold text-guard-primary">{product.price} ₽</span>
+            )}
+          </div>
+          
+          <p className="text-gray-700 mb-6">{product.description}</p>
+          
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-3">Основные характеристики:</h3>
             <ul className="space-y-2">
-              {product.features.map((feature, index) => (
+              {product.features.slice(0, 5).map((feature, index) => (
                 <li key={index} className="flex items-start">
-                  <Check className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
+                  <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 mr-2" />
                   <span>{feature}</span>
                 </li>
               ))}
             </ul>
-          </TabsContent>
-          <TabsContent value="specifications">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.entries(product.specifications).map(([key, value], index) => (
-                <div key={index} className="border-b pb-2">
-                  <span className="text-gray-600">{key}: </span>
-                  <span className="font-medium">{value}</span>
-                </div>
-              ))}
+          </div>
+          
+          <div className="mb-8">
+            <div className="flex items-center mb-4">
+              <div className="border border-gray-300 rounded flex items-center">
+                <button 
+                  onClick={handleDecrement}
+                  className="px-4 py-2 border-r border-gray-300 hover:bg-gray-100"
+                >
+                  -
+                </button>
+                <span className="px-4 py-2">{quantity}</span>
+                <button 
+                  onClick={handleIncrement}
+                  className="px-4 py-2 border-l border-gray-300 hover:bg-gray-100"
+                >
+                  +
+                </button>
+              </div>
+              <span className="ml-3 text-gray-600">
+                Доступно: {Math.min(10, Math.max(0, Math.floor(Math.random() * 100)))} шт.
+              </span>
             </div>
-          </TabsContent>
-        </Tabs>
+            
+            <div className="flex flex-wrap gap-3">
+              <Button 
+                className="flex-1 btn-primary"
+                onClick={handleAddToCart}
+                disabled={!product.inStock}
+              >
+                <ShoppingCart className="mr-2 h-5 w-5" />
+                В корзину
+              </Button>
+              
+              <Button variant="outline" className="btn-secondary">
+                <Heart className="mr-2 h-5 w-5" />
+                В избранное
+              </Button>
+              
+              <Button variant="outline" className="btn-secondary">
+                <Share2 className="mr-2 h-5 w-5" />
+                Поделиться
+              </Button>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-200 pt-4">
+            <div className="flex items-center mb-3">
+              <Package className="h-5 w-5 text-guard-primary mr-2" />
+              <span className="font-medium">Бесплатная доставка</span>
+              <span className="ml-1 text-gray-500">при заказе от 5000 ₽</span>
+            </div>
+            <div className="flex items-center">
+              <ShoppingBag className="h-5 w-5 text-guard-primary mr-2" />
+              <span className="font-medium">Возврат в течение 14 дней</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Product Tabs */}
+      <div className="mb-12">
+        <div className="border-b border-gray-200 mb-6">
+          <div className="flex overflow-x-auto space-x-8">
+            <button className="text-guard-primary border-b-2 border-guard-primary font-medium py-2 px-1">Характеристики</button>
+            <button className="text-gray-500 hover:text-guard-primary py-2 px-1">Описание</button>
+            <button className="text-gray-500 hover:text-guard-primary py-2 px-1">Отзывы ({product.reviews})</button>
+            <button className="text-gray-500 hover:text-guard-primary py-2 px-1">Вопросы и ответы</button>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {Object.entries(product.specifications).map(([key, value], index) => (
+              <div key={index} className="flex">
+                <span className="w-1/2 text-gray-600">{key}:</span>
+                <span className="w-1/2 font-medium">{value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Related Products */}
+      <div className="mb-12">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold">Похожие товары</h2>
+          <button className="text-guard-primary flex items-center hover:text-guard-secondary">
+            Посмотреть все <ArrowRight className="ml-1 h-4 w-4" />
+          </button>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {relatedProducts.map(product => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </div>
+
+      {/* Recently Viewed */}
+      <div>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold">Недавно просмотренные</h2>
+          <button className="text-guard-primary flex items-center hover:text-guard-secondary">
+            Посмотреть все <ArrowRight className="ml-1 h-4 w-4" />
+          </button>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {relatedProducts.slice(0, 4).reverse().map(product => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
       </div>
     </div>
   );

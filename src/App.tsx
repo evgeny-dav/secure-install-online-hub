@@ -19,6 +19,10 @@ import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
+import Maintenance from "./pages/Maintenance";
+import SystemDesign from "./pages/SystemDesign";
+import SystemModernization from "./pages/SystemModernization";
+import Consulting from "./pages/Consulting";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +48,10 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
+              <Route path="/services/maintenance" element={<Maintenance />} />
+              <Route path="/services/design" element={<SystemDesign />} />
+              <Route path="/services/upgrade" element={<SystemModernization />} />
+              <Route path="/services/consulting" element={<Consulting />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
