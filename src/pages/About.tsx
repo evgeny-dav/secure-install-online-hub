@@ -155,7 +155,7 @@ const About = () => {
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="h-64">
               <img 
-                src="boss.jpg" 
+                src="/about/boss.jpg" 
                 alt="Технический директор" 
                 className="w-full h-full object-cover"
               />
